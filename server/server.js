@@ -2,6 +2,8 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
+const {generateMessage} = require('./utils/message');
+
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 const app = express();
@@ -11,44 +13,22 @@ app.use(express.static(publicPath));
 
 io.on('connection', (socket) => {
   console.log('New user connected.');
-  /* socket.emit('newEmail', {
-    from: 'reach.sanjoy.ganguly@gmail.com',
-    text: 'Hi, I am sending invitation for Zensar Interview',
-    createdAt: 68787
-  }); */
-  /* socket.emit('newMessage', {
-    from: 'Sardar',
-    text: 'Hi, Today it is holiday today',
-    createdAt: 123123
-  }); */
+  /* socket.emit('newEmail', generateMessage('reach.sanjoy.ganguly@gmail.com',
+  'Hi, I am sending invitation for Zensar Interview')); */
+  /* socket.emit('newMessage', generateMessage('Sardar','Hi, Today it is holiday today')); */
   /* socket.on('createEmail', (newEmail) => {
     console.log('createEmail', newEmail);
   }); */
 
-  socket.emit('newMessage', {
-    from: 'admin@node-chat-app.in',
-    text: 'Welcome to node-chat-app'
-  });
+  socket.emit('newMessage', generateMessage('admin@node-chat-app.in','Welcome to node-chat-app'));
 
-  socket.broadcast.emit('newMessage', {
-    from: 'admin@node-chat-app.in',
-    text: 'New user joined into node-chat-app',
-    createdAt: new Date().getTime()
-  });
+  socket.broadcast.emit('newMessage', generateMessage('admin@node-chat-app.in', 'New user joined into node-chat-app'));
 
   socket.on('createMessage', (newMessage) => {
     console.log('createMessage', newMessage);
-    io.emit('newMessage', {
-      from: newMessage.from,
-      text: newMessage.text,
-      createdAt: new Date().getTime()
-    });
+    io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
 
-    /* socket.broadcast.emit('newMessage', {
-      from: newMessage.from,
-      text: newMessage.text,
-      createdAt: new Date().getTime()
-    }); */
+    /* socket.broadcast.emit('newMessage', generateMessage(newMessage.from,newMessage.text)); */
   });
   socket.on('disconnect', () => {
     console.log('User was disconnected from server');
