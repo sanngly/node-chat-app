@@ -24,12 +24,13 @@ io.on('connection', (socket) => {
 
   socket.broadcast.emit('newMessage', generateMessage('admin@node-chat-app.in', 'New user joined into node-chat-app'));
 
-  socket.on('createMessage', (newMessage) => {
+  socket.on('createMessage', (newMessage, callback) => {
     console.log('createMessage', newMessage);
     io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
-
+    callback('This is from the server');
     /* socket.broadcast.emit('newMessage', generateMessage(newMessage.from,newMessage.text)); */
   });
+  
   socket.on('disconnect', () => {
     console.log('User was disconnected from server');
   });
